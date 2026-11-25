@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Human Neuro-Endocrine System - one looped system</title>
+<style>
+  html, body { margin:0; height:100%; background:#0B0E13; color:#E6EDF3;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif; overflow:hidden; }
+  #scene { position:fixed; inset:0; }
+  #labels { position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:2; }
+  .node-label { position:absolute; transform:translate(-50%,-130%); pointer-events:auto; cursor:pointer; text-align:center; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px;
+    background:rgba(10,14,22,.85); border:1.5px solid; font-size:11.5px; font-weight:700; letter-spacing:.04em; white-space:nowrap; }
+  .pill .dot { width:8px; height:8px; border-radius:50%; }
+  .label-sub { font-size:9.5px; font-weight:600; color:#93A5B8; margin-top:2px; text-shadow:0 1px 4px #000; }
+  .x-marker { position:absolute; transform:translate(-50%,-50%); color:#FF5A3C; font-weight:900; font-size:17px;
+    text-shadow:0 0 9px rgba(255,90,60,.9), 0 0 2px #000; pointer-events:none; display:none;
+    animation:pulseX 1.4s ease-in-out infinite; }
+  @keyframes pulseX { 0%,100% { opacity:.75; } 50% { opacity:1; transform:translate(-50%,-50%) scale(1.22); } }
+  header { position:fixed; top:16px; left:0; right:0; text-align:center; pointer-events:none; z-index:3; }
+  header h1 { margin:0; font-size:24px; letter-spacing:2px; }
+  header p { margin:4px 0 0; color:#93A5B8; font-style:italic; font-size:14px; }
+  #toolbar { position:fixed; top:86px; left:0; right:0; display:flex; justify-content:center; gap:6px; z-index:3; flex-wrap:wrap; }
+  .tbtn { background:rgba(16,21,28,.85); color:#C7D0DB; border:1px solid #3A4656; border-radius:8px;
+    padding:5px 11px; font-size:12px; cursor:pointer; font-family:inherit; }
+  .tbtn:hover { background:#1C2531; }
+  .tbtn.on { color:#37C8E8; border-color:#37C8E8; }
+  .panelbox { background:rgba(16,21,28,.86); border:1px solid #3A4656; border-radius:8px; padding:12px 14px; }
+  #left { position:fixed; left:16px; top:126px; width:252px; z-index:3; display:flex; flex-direction:column; gap:10px;
+    max-height:calc(100vh - 150px); overflow-y:auto; scrollbar-width:thin; }
+  #left h2, #inspector h2 { font-size:11.5px; letter-spacing:1.5px; margin:0 0 7px; color:#C7D0DB; }
+  .mode-btn { display:block; width:100%; text-align:left; margin:4px 0; background:#10151C; color:#C7D0DB;
+    border:1px solid #3A4656; border-radius:7px; padding:7px 10px; font-size:12.5px; cursor:pointer; font-family:inherit; }
+  .mode-btn.on { border-color:#F2E14C; color:#E6EDF3; }
+  #badge { display:inline-block; font-size:10px; font-weight:800; letter-spacing:1px; padding:2px 8px; border-radius:999px; margin:6px 0 4px; }
+  #balance-wrap { height:8px; background:#10151C; border:1px solid #3A4656; border-radius:99px; overflow:hidden; margin:4px 0 2px; }
+  #balance-bar { height:100%; background:linear-gradient(90deg,#FF5A3C,#F59E42,#3DDC84); transition:width .5s ease; }
+  #mode-summary { font-size:12px; color:#C7D0DB; margin:6px 0 2px; line-height:1.45; }
+  #speed-row { display:flex; align-items:center; gap:8px; font-size:11.5px; color:#93A5B8; margin-top:6px; }
+  #speed { flex:1; accent-color:#37C8E8; }
+  .pw-row { display:flex; gap:8px; align-items:flex-start; margin:4px 0; font-size:12px; color:#C7D0DB; cursor:pointer; }
+  .pw-row input { margin-top:2px; accent-color:#37C8E8; }
+  .pw-row .dot { width:9px; height:9px; border-radius:50%; flex:none; position:relative; top:3px; }
+  .legend-row { display:flex; gap:8px; align-items:baseline; margin:3px 0; font-size:12.5px; }
+  .legend-row .dot { width:10px; height:10px; border-radius:50%; flex:none; position:relative; top:1px; }
+  .dim { color:#93A5B8; font-size:11.5px; }
+  #inspector { position:fixed; right:16px; top:126px; width:288px; z-index:3; max-height:calc(100vh - 150px); overflow-y:auto; scrollbar-width:thin; }
+  #inspector h3 { margin:0 0 4px; font-size:16px; }
+  #inspector p { margin:4px 0; font-size:13px; color:#C7D0DB; line-height:1.5; }
+  #inspector .conn { font-size:12px; margin:3px 0; color:#C7D0DB; }
+  #inspector .conn b { color:#E6EDF3; }
+  .quick { display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; }
+  .quick button { background:#10151C; border:1px solid #3A4656; color:#C7D0DB; border-radius:99px;
+    padding:3px 9px; font-size:11px; cursor:pointer; font-family:inherit; }
+  .quick button:hover { color:#E6EDF3; }
+  #clear-focus { display:none; margin-top:8px; background:none; border:none; color:#37C8E8; cursor:pointer; font-size:12px; padding:0; font-family:inherit; }
+  #fx-toggle { position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:5;
+    background:#141A22; color:#F2E14C; border:1px solid #F2E14C; border-radius:20px;
+    padding:8px 18px; font-size:13.5px; cursor:pointer; font-family:inherit; }
+  #fx-toggle:hover { background:#1C2531; }
+  #fx { position:fixed; left:50%; transform:translateX(-50%); bottom:64px; z-index:4;
+    width:900px; max-width:94vw; max-height:64vh; overflow:auto; display:none;
+    background:rgba(13,17,23,.97); border:1px solid #3A4656; border-radius:10px; padding:16px 20px; }
+  #fx.open { display:block; }
+  #fx h2 { margin:0 0 2px; font-size:16px; color:#F2E14C; }
+  #fx p.sub { margin:0 0 10px; color:#93A5B8; font-size:12.5px; }
+  #fx p.mechanism { margin:0 0 8px; font-size:13px; color:#C7D0DB; }
+  #fx p.mechanism b { color:#E6EDF3; }
+  #fx table { border-collapse:collapse; width:100%; font-size:12.8px; }
+  #fx th, #fx td { text-align:left; vertical-align:top; padding:7px 9px; border-bottom:1px solid #232D3A; }
+  #fx th { color:#C7D0DB; letter-spacing:.4px; font-size:12px; }
+  #fx td.node { color:#E6EDF3; font-weight:600; white-space:nowrap; }
+  #fx td.net { color:#7FE8A8; }
+  #fx td { color:#C7D0DB; }
+  @media (max-width: 1150px) { #left { display:none; } }
+  @media (max-width: 760px) { #inspector { display:none; } header h1 { font-size:18px; } }
+</style>
+</head>
+<body>
+<div id="scene"></div>
+<div id="labels"></div>
+<header>
+  <h1>THE HUMAN NEURO-ENDOCRINE SYSTEM</h1>
+  <p>one looped system - every link a feedback loop</p>
+</header>
+<div id="toolbar">
+  <button class="tbtn on" id="btn-play" type="button">Pause</button>
+  <button class="tbtn on" id="btn-orbit" type="button">Auto-orbit</button>
+  <button class="tbtn on" id="btn-labels" type="button">Labels</button>
+  <button class="tbtn" data-cam="overview" type="button">Overview</button>
+  <button class="tbtn" data-cam="hub" type="button">Axis Hub</button>
+  <button class="tbtn" data-cam="top" type="button">Top Matrix</button>
+</div>
+
+<div id="left">
+  <div class="panelbox">
+    <h2>SIMULATION</h2>
+    <div id="modes"></div>
+    <span id="badge"></span>
+    <div id="balance-wrap"><div id="balance-bar"></div></div>
+    <div class="dim"><span id="balance-val"></span> system balance</div>
+    <p id="mode-summary"></p>
+    <div id="speed-row"><span>Speed</span><input id="speed" type="range" min="0.2" max="2.5" step="0.1" value="1"><span id="speed-val">1.0x</span></div>
+  </div>
+  <div class="panelbox">
+    <h2>PATHWAYS</h2>
+    <div id="pathways"></div>
+  </div>
+  <div class="panelbox">
+    <h2>NODES</h2>
+    <div id="legend-nodes"></div>
+    <h2 style="margin-top:10px;">AXES</h2>
+    <div id="legend-axes"></div>
+  </div>
+</div>
+
+<div id="inspector" class="panelbox">
+  <h2>INSPECTOR</h2>
+  <h3 id="insp-name">The system</h3>
+  <p id="insp-body">Loading model data...</p>
+  <div id="insp-conns"></div>
+  <button id="clear-focus" type="button">Clear focus</button>
+  <div class="quick" id="quick-list"></div>
+</div>
+
+<button id="fx-toggle" type="button">Coffee x Chocolate - node by node</button>
+<div id="fx"></div>
+
+<script type="module">
+import * as THREE from './vendor/three.module.js';
+import { OrbitControls } from './vendor/OrbitControls.js';
+
+const $ = id => document.getElementById(id);
+
+async function main() {
+  const data = await (await fetch('model-data.json')).json();
+  const nodeById = {}; data.nodes.forEach(n => nodeById[n.id] = n);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(devicePixelRatio);
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setClearColor(0x0B0E13);
+  $('scene').appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(46, innerWidth / innerHeight, 0.1, 100);
+  camera.position.set(0, 1.2, 11.5);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.set(0, 0.6, 0);
+  controls.enableDamping = true;
+
+  const world = new THREE.Group();
+  scene.add(world);
+
+  const RADIUS = { core: 0.62, controller: 0.44, plant: 0.46 };
+  const posOf = {}, pickables = [], labelEls = {};
+  const labelsLayer = $('labels');
+  data.nodes.forEach(n => {
+    const r = RADIUS[n.kind] || 0.46;
+    const pos = new THREE.Vector3(...n.pos);
+    posOf[n.id] = pos;
+    const mesh = new THREE.Mesh(
+      new THREE.SphereGeometry(r, 40, 28),
+      new THREE.MeshBasicMaterial({ color: new THREE.Color(n.color) }));
+    mesh.position.copy(pos);
+    mesh.userData = n;
+    world.add(mesh);
+    pickables.push(mesh);
+    const el = document.createElement('div');
+    el.className = 'node-label';
+    el.innerHTML = `<span class="pill" style="border-color:${n.color};color:${n.color}">` +
+      `<span class="dot" style="background:${n.color}"></span>${n.name}</span>` +
+      `<div class="label-sub">${n.kind}</div>`;
+    el.addEventListener('click', () => selectNode(n.id));
+    labelsLayer.appendChild(el);
+    labelEls[n.id] = el;
+  });
+
+  // Curved edges with flowing signal particles
+  const edgeObjs = [];
+  data.edges.forEach(e => {
+    const a = posOf[e.from], b = posOf[e.to];
+    const mid = a.clone().lerp(b, 0.5); mid.y += 0.45;
+    mid.add(a.clone().lerp(b, 0.5).setY(0).normalize().multiplyScalar(0.12));
+    const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
+    const pts = curve.getPoints(42);
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const baseOpacity = e.dashed ? 0.55 : 0.8;
+    const mat = e.dashed
+      ? new THREE.LineDashedMaterial({ color: new THREE.Color(e.color), dashSize: 0.22, gapSize: 0.14, transparent: true, opacity: baseOpacity })
+      : new THREE.LineBasicMaterial({ color: new THREE.Color(e.color), transparent: true, opacity: baseOpacity });
+    const line = new THREE.Line(geo, mat);
+    if (e.dashed) line.computeLineDistances();
+    world.add(line);
+    const N = 5;
+    const pGeo = new THREE.BufferGeometry();
+    pGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+    const pMat = new THREE.PointsMaterial({ color: new THREE.Color(e.color), size: 0.15,
+      transparent: true, opacity: 0.95, blending: THREE.AdditiveBlending, depthWrite: false });
+    const points = new THREE.Points(pGeo, pMat);
+    world.add(points);
+    const xEl = document.createElement('div');
+    xEl.className = 'x-marker'; xEl.textContent = 'X';
+    labelsLayer.appendChild(xEl);
+    edgeObjs.push({ e, curve, line, mat, baseOpacity, points, pGeo,
+      offsets: Array.from({ length: N }, (_, i) => i / N), xEl, mid });
+  });
+
+  // Legend
+  const legendRows = items => items.map(x =>
+    `<div class="legend-row"><span class="dot" style="background:${x.color}"></span><span><b>${x.name}</b></span></div>`).join('');
+  $('legend-nodes').innerHTML = legendRows(data.nodes);
+  $('legend-axes').innerHTML = data.axes.map(a =>
+    `<div class="legend-row"><span class="dot" style="background:${a.color}"></span><span><b>${a.name}</b> <span class="dim">${a.detail}</span></span></div>`).join('');
+
+  // Pathway filters
+  const pwVisible = {};
+  data.pathways.forEach(p => {
+    pwVisible[p.id] = true;
+    const row = document.createElement('label');
+    row.className = 'pw-row';
+    row.innerHTML = `<input type="checkbox" checked><span class="dot" style="background:${p.color}"></span><span>${p.name}</span>`;
+    row.querySelector('input').addEventListener('change', ev => { pwVisible[p.id] = ev.target.checked; refreshVisibility(); });
+    $('pathways').appendChild(row);
+  });
+
+  // Inspector
+  let focused = null;
+  function selectNode(id) {
+    focused = id;
+    const n = nodeById[id];
+    $('insp-name').textContent = n.name;
+    $('insp-name').style.color = n.color;
+    $('insp-body').textContent = n.detail || '';
+    const conns = data.edges.filter(e => e.from === id || e.to === id);
+    $('insp-conns').innerHTML = conns.map(e => {
+      const other = e.from === id ? nodeById[e.to] : nodeById[e.from];
+      const arrow = e.from === id ? '->' : '<-';
+      return `<div class="conn">${arrow} <b>${other.name}</b> <span class="dim">${e.signal}</span></div>`;
+    }).join('');
+    $('clear-focus').style.display = 'block';
+    refreshVisibility();
+  }
+  function clearFocus() {
+    focused = null;
+    $('insp-name').textContent = 'The system';
+    $('insp-name').style.color = '';
+    $('insp-body').textContent = data.about;
+    $('insp-conns').innerHTML = '';
+    $('clear-focus').style.display = 'none';
+    refreshVisibility();
+  }
+  $('clear-focus').addEventListener('click', clearFocus);
+  data.nodes.forEach(n => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = n.name;
+    b.addEventListener('click', () => selectNode(n.id));
+    $('quick-list').appendChild(b);
+  });
+  $('insp-body').textContent = data.about;
+
+  // Simulation modes
+  let mode = data.sim_modes[0];
+  const BADGE_STYLES = { homeostasis: ['#3DDC84', 'rgba(61,220,132,.15)'],
+    stressed: ['#F59E42', 'rgba(245,158,66,.15)'], decoupled: ['#FF5A3C', 'rgba(255,90,60,.15)'] };
+  data.sim_modes.forEach(m => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'mode-btn' + (m.id === mode.id ? ' on' : '');
+    b.textContent = m.name; b.dataset.mode = m.id;
+    b.addEventListener('click', () => setMode(m.id));
+    $('modes').appendChild(b);
+  });
+  function isBroken(e) {
+    return mode.id === 'decoupled' && (mode.broken || []).some(([f, t]) => f === e.from && t === e.to);
+  }
+  function setMode(id) {
+    mode = data.sim_modes.find(m => m.id === id);
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('on', b.dataset.mode === id));
+    const [fg, bg] = BADGE_STYLES[id] || BADGE_STYLES.homeostasis;
+    const badge = $('badge');
+    badge.textContent = mode.badge; badge.style.color = fg; badge.style.background = bg;
+    badge.style.border = `1px solid ${fg}`;
+    $('balance-bar').style.width = mode.balance + '%';
+    $('balance-val').textContent = mode.balance + '%';
+    $('mode-summary').textContent = mode.summary;
+    refreshVisibility();
+  }
+  function edgeSpeed(e) {
+    if (mode.id === 'stressed' && (e.pathway === 'dopamine' || e.pathway === 'hormonal')) return 2.0;
+    return 1.0;
+  }
+  function refreshVisibility() {
+    edgeObjs.forEach(o => {
+      const broken = isBroken(o.e);
+      const pwOk = pwVisible[o.e.pathway] !== false;
+      const focusDim = focused && o.e.from !== focused && o.e.to !== focused;
+      o.line.visible = pwOk;
+      o.points.visible = pwOk && !broken;
+      o.mat.opacity = broken ? 0.07 : (focusDim ? o.baseOpacity * 0.25 : o.baseOpacity);
+      o.xEl.style.display = (broken && labelsOn) ? 'block' : 'none';
+      o.broken = broken;
+    });
+  }
+
+  // Toolbar
+  let playing = true, orbitOn = true, labelsOn = true, speed = 1.0;
+  $('btn-play').addEventListener('click', e => { playing = !playing; e.target.textContent = playing ? 'Pause' : 'Play'; e.target.classList.toggle('on', playing); });
+  $('btn-orbit').addEventListener('click', e => { orbitOn = !orbitOn; e.target.classList.toggle('on', orbitOn); });
+  $('btn-labels').addEventListener('click', e => { labelsOn = !labelsOn; e.target.classList.toggle('on', labelsOn);
+    labelsLayer.style.display = labelsOn ? 'block' : 'none'; refreshVisibility(); });
+  $('speed').addEventListener('input', e => { speed = parseFloat(e.target.value); $('speed-val').textContent = speed.toFixed(1) + 'x'; });
+
+  // Camera presets (lerped)
+  let camGoal = null;
+  const CAMS = { overview: [[0, 1.2, 11.5], [0, 0.6, 0]],
+    hub: [[2.6, 2.8, 5.4], [-0.15, 1.8, 0]], top: [[0, 12.5, 0.6], [0, 0.4, 0]] };
+  document.querySelectorAll('[data-cam]').forEach(b => b.addEventListener('click', () => {
+    const [p, t] = CAMS[b.dataset.cam];
+    camGoal = { pos: new THREE.Vector3(...p), tgt: new THREE.Vector3(...t) };
+  }));
+  controls.addEventListener('start', () => { camGoal = null; });
+
+  // Picking on the canvas
+  const ray = new THREE.Raycaster(), ptr = new THREE.Vector2();
+  renderer.domElement.addEventListener('click', e => {
+    ptr.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+    ray.setFromCamera(ptr, camera);
+    const hit = ray.intersectObjects(pickables)[0];
+    if (hit) selectNode(hit.object.userData.id);
+  });
+
+  // Effects sheet (intake module)
+  const im = data.intake_module;
+  $('fx').innerHTML = `<h2>${im.title}</h2><p class="sub">What each one does at each node of the system - distilled from the mechanism notes. Scoped to the typical healthy system.</p>` +
+    `<p class="mechanism"><b>Coffee pushes:</b> ${im.coffee_pushes}</p>` +
+    `<p class="mechanism"><b>Chocolate brakes:</b> ${im.chocolate_brakes}</p>` +
+    `<table><thead><tr><th>Node</th><th>Coffee</th><th>Chocolate</th><th>Net</th></tr></thead><tbody>` +
+    im.effects.map(r => `<tr><td class="node">${r.node}</td><td>${r.coffee}</td><td>${r.chocolate}</td><td class="net">${r.net}</td></tr>`).join('') +
+    `</tbody></table>`;
+  $('fx-toggle').addEventListener('click', () => $('fx').classList.toggle('open'));
+
+  setMode(mode.id);
+
+  addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+  });
+
+  const clock = new THREE.Clock();
+  const tmpV = new THREE.Vector3();
+  function projectTo(el, v3) {
+    tmpV.copy(v3).applyMatrix4(world.matrixWorld).project(camera);
+    const behind = tmpV.z > 1;
+    el.style.display = behind || !labelsOn ? 'none' : '';
+    if (!behind) {
+      el.style.left = ((tmpV.x * 0.5 + 0.5) * innerWidth) + 'px';
+      el.style.top = ((-tmpV.y * 0.5 + 0.5) * innerHeight) + 'px';
+    }
+    return !behind;
+  }
+  renderer.setAnimationLoop(() => {
+    const dt = Math.min(clock.getDelta(), 0.05);
+    const t = clock.elapsedTime;
+    if (playing && orbitOn) world.rotation.y += 0.0016;
+    world.updateMatrixWorld();
+    if (camGoal) {
+      camera.position.lerp(camGoal.pos, 0.07);
+      controls.target.lerp(camGoal.tgt, 0.07);
+      if (camera.position.distanceTo(camGoal.pos) < 0.05) camGoal = null;
+    }
+    if (playing) {
+      edgeObjs.forEach(o => {
+        if (!o.points.visible) return;
+        const arr = o.pGeo.attributes.position.array;
+        const sp = 0.055 * speed * edgeSpeed(o.e);
+        for (let i = 0; i < o.offsets.length; i++) {
+          o.offsets[i] = (o.offsets[i] + sp * dt * 3.2) % 1;
+          const pt = o.curve.getPoint(o.offsets[i]);
+          arr[i * 3] = pt.x; arr[i * 3 + 1] = pt.y; arr[i * 3 + 2] = pt.z;
+        }
+        o.pGeo.attributes.position.needsUpdate = true;
+      });
+    }
+    data.nodes.forEach(n => { if (labelsOn) projectTo(labelEls[n.id], posOf[n.id]); });
+    edgeObjs.forEach(o => { if (o.broken && labelsOn) projectTo(o.xEl, o.mid); else if (o.broken) o.xEl.style.display = 'none'; });
+    controls.update();
+    renderer.render(scene, camera);
+  });
+}
+main().catch(err => { $('insp-body').textContent = 'Could not load model-data.json - serve this folder over http (python3 -m http.server). ' + err.message; });
+</script>
+</body>
+</html>
