@@ -1,0 +1,341 @@
+{
+  "model": "The Human Neuro-Endocrine System",
+  "version": "public-2026-11-24",
+  "about": "The human neuro-endocrine system modelled as one looped matrice of causally dependent systems which rely on homeostasis to remain balanced. Neurology, endocrine function and cognition are inseparable: the hypothalamus reads dopamine expression across five dopaminergic pathways and converts it into control signals for the pituitary, its sub-delegate hub, which drives three hormone axes - thyroid (HPT), adrenal (HPA), gonadal (HPG). Every pathway is bidirectional: every link is a feedback loop.",
+  "palette": {
+    "background": "#0B0E13",
+    "text_primary": "#E6EDF3",
+    "text_secondary": "#C7D0DB"
+  },
+  "nodes": [
+    {
+      "id": "neuro",
+      "name": "NEURO",
+      "kind": "core",
+      "color": "#37C8E8",
+      "pos": [
+        3.2,
+        1.6,
+        0.0
+      ],
+      "detail": "The cognitive-neurological layer. Dopamine expression across the five dopaminergic pathways is the management signal the hypothalamus reads; neurology, endocrine function and cognition are one system, not three."
+    },
+    {
+      "id": "hypothalamus",
+      "name": "HYPOTHALAMUS",
+      "kind": "controller",
+      "color": "#9FB6C9",
+      "pos": [
+        0.4,
+        2.5,
+        -0.9
+      ],
+      "detail": "The upstream controller. Converts dopaminergic expression into control signals for the anterior pituitary, and integrates feedback from every axis plant."
+    },
+    {
+      "id": "pituitary",
+      "name": "PITUITARY",
+      "kind": "controller",
+      "color": "#F59E42",
+      "pos": [
+        -0.7,
+        1.1,
+        0.9
+      ],
+      "detail": "The sub-delegate hub. Relays hypothalamic control signals as axis drives: TSH to the thyroid, ACTH to the adrenal, gonadotropins to the gonadal plant."
+    },
+    {
+      "id": "thyroid",
+      "name": "THYROID",
+      "kind": "plant",
+      "color": "#3DDC84",
+      "pos": [
+        2.6,
+        0.1,
+        -0.7
+      ],
+      "detail": "HPT axis plant. TSH is the signal, T4 is the battery, T3 is the active compound. Sets metabolic rate for hormone processing, digestion and dopamine interaction - which is why thyroid stabilisation comes first in any cascade."
+    },
+    {
+      "id": "adrenal",
+      "name": "ADRENAL",
+      "kind": "plant",
+      "color": "#FF5A3C",
+      "pos": [
+        -2.3,
+        2.7,
+        -0.6
+      ],
+      "detail": "HPA axis plant. Answers ACTH with cortisol and the core hormones; vasopressin and cardiac stability ride on this axis. It is also the system's compensator of last resort."
+    },
+    {
+      "id": "gonadal",
+      "name": "GONADAL",
+      "kind": "plant",
+      "color": "#C44FD6",
+      "pos": [
+        -2.8,
+        -0.2,
+        -0.5
+      ],
+      "detail": "HPG axis plant. Gonadal signalling under hypothalamic-pituitary drive, with its own feedback to the controllers."
+    },
+    {
+      "id": "liverkidney",
+      "name": "LIVER / KIDNEY",
+      "kind": "plant",
+      "color": "#9FB6C9",
+      "pos": [
+        2.3,
+        -1.6,
+        -0.9
+      ],
+      "detail": "The conversion site: peripheral T4 -> T3 conversion happens here, not in the thyroid itself. A loop is only as strong as its conversion step."
+    }
+  ],
+  "axes": [
+    {
+      "id": "hpt",
+      "name": "HPT",
+      "color": "#7FE8A8",
+      "detail": "hypothalamus -> pituitary -> thyroid"
+    },
+    {
+      "id": "hpa",
+      "name": "HPA",
+      "color": "#FF8C69",
+      "detail": "hypothalamus -> pituitary -> adrenal"
+    },
+    {
+      "id": "hpg",
+      "name": "HPG",
+      "color": "#E87FB0",
+      "detail": "hypothalamus -> pituitary -> gonadal"
+    }
+  ],
+  "edges": [
+    {
+      "from": "neuro",
+      "to": "hypothalamus",
+      "color": "#37C8E8",
+      "dashed": false,
+      "signal": "dopamine expression (five pathways)",
+      "pathway": "dopamine"
+    },
+    {
+      "from": "hypothalamus",
+      "to": "pituitary",
+      "color": "#9FB6C9",
+      "dashed": true,
+      "signal": "control signals via the infundibular stalk",
+      "pathway": "control"
+    },
+    {
+      "from": "pituitary",
+      "to": "thyroid",
+      "color": "#F59E42",
+      "dashed": false,
+      "signal": "TSH drive",
+      "pathway": "hormonal"
+    },
+    {
+      "from": "thyroid",
+      "to": "hypothalamus",
+      "color": "#3DDC84",
+      "dashed": false,
+      "signal": "T4/T3 negative feedback",
+      "pathway": "feedback"
+    },
+    {
+      "from": "pituitary",
+      "to": "adrenal",
+      "color": "#F59E42",
+      "dashed": false,
+      "signal": "ACTH drive",
+      "pathway": "hormonal"
+    },
+    {
+      "from": "adrenal",
+      "to": "hypothalamus",
+      "color": "#FF8C69",
+      "dashed": false,
+      "signal": "cortisol feedback",
+      "pathway": "feedback"
+    },
+    {
+      "from": "pituitary",
+      "to": "gonadal",
+      "color": "#F59E42",
+      "dashed": false,
+      "signal": "gonadotropin drive",
+      "pathway": "hormonal"
+    },
+    {
+      "from": "gonadal",
+      "to": "hypothalamus",
+      "color": "#C44FD6",
+      "dashed": false,
+      "signal": "gonadal feedback",
+      "pathway": "feedback"
+    },
+    {
+      "from": "thyroid",
+      "to": "liverkidney",
+      "color": "#7FE8A8",
+      "dashed": true,
+      "signal": "T4 for conversion",
+      "pathway": "hormonal"
+    },
+    {
+      "from": "liverkidney",
+      "to": "hypothalamus",
+      "color": "#7FE8A8",
+      "dashed": true,
+      "signal": "T3, system-wide",
+      "pathway": "feedback"
+    },
+    {
+      "from": "neuro",
+      "to": "pituitary",
+      "color": "#37C8E8",
+      "dashed": true,
+      "signal": "dopaminergic modulation",
+      "pathway": "dopamine"
+    },
+    {
+      "from": "adrenal",
+      "to": "neuro",
+      "color": "#FF8C69",
+      "dashed": true,
+      "signal": "cortisol / core output",
+      "pathway": "feedback"
+    }
+  ],
+  "pathways": [
+    {
+      "id": "dopamine",
+      "name": "dopamine signalling (five dopaminergic pathways)",
+      "color": "#37C8E8"
+    },
+    {
+      "id": "hormonal",
+      "name": "hormonal axes - TSH, ACTH, gonadotropins and the core hormones",
+      "color": "#F59E42"
+    },
+    {
+      "id": "feedback",
+      "name": "feedback - every plant reports back to the controllers",
+      "color": "#3DDC84"
+    },
+    {
+      "id": "control",
+      "name": "control - hypothalamic signals to the pituitary hub",
+      "color": "#9FB6C9"
+    }
+  ],
+  "decoupling": {
+    "title": "Why loops matter: decoupling",
+    "body": "The system holds homeostasis only while its loops stay closed. Decouple one node - a plant that stops answering, a feedback line that goes silent - and the controllers receive contradictory or absent reports, compensation is ordered from the wrong organ, and balance decays toward systemic failure. The failure is never local: in a looped matrice, every decoupling is a whole-system event."
+  },
+  "intake_module": {
+    "title": "Every programmer's first love: coffee and chocolate",
+    "coffee_pushes": "adenosine A1/A2A antagonism -> PVN CRH/AVP up -> POMC -> ACTH peak 30-60 min -> cortisol; A2A-D2 heteromer disinhibition amplifying D2 signalling. Coffee pushes the HPA axis and sharpens the dopaminergic layer at once.",
+    "chocolate_brakes": "theobromine too weak at A1/A2A to push; FAAH inhibition prolonging anandamide/CB1 blunting of stress CRH; 11beta-HSD1 inhibition reducing cortisol regeneration; baseline ACTH neutral. Chocolate brakes the same axis coffee pushes.",
+    "note": "One pushes, one brakes, both land on the same looped system - which is why the morning ritual is a control-systems problem, not a habit.",
+    "effects": [
+      {
+        "node": "Hypothalamus - CRH",
+        "coffee": "increases acutely (A1/A2A blockade in the PVN)",
+        "chocolate": "neutral at rest; blunts stress-induced surges (CB1 / FAAH)",
+        "net": "Affected - opposing directions under stress"
+      },
+      {
+        "node": "Hypothalamus - AVP (vasopressin)",
+        "coffee": "increases mildly at high doses; renal A1 antagonism (mild diuresis)",
+        "chocolate": "no significant central effect",
+        "net": "Minimally affected"
+      },
+      {
+        "node": "Anterior pituitary - ACTH",
+        "coffee": "increases, +20-50% peak at 30-60 min in non-habituated users",
+        "chocolate": "neutral at baseline; attenuates acute stress elevation",
+        "net": "Affected"
+      },
+      {
+        "node": "Adrenal - cortisol",
+        "coffee": "increases acutely; amplifies the awakening response and stress reactivity",
+        "chocolate": "decreases active tissue cortisol via 11beta-HSD1 inhibition",
+        "net": "Affected - bidirectional"
+      },
+      {
+        "node": "Peripheral pool - cortisone",
+        "coffee": "minimal direct change",
+        "chocolate": "total pool unchanged; cortisol:cortisone ratio drops",
+        "net": "Not significantly affected"
+      },
+      {
+        "node": "Adrenal - DHEA / DHEA-S",
+        "coffee": "no meaningful acute change",
+        "chocolate": "no direct stimulation; ratio to cortisol improves secondarily",
+        "net": "Not directly affected"
+      },
+      {
+        "node": "Adrenal - aldosterone",
+        "coffee": "transient minor increase at high doses (renal A1 blockade, renin up)",
+        "chocolate": "no direct effect; flavanols mildly inhibit ACE",
+        "net": "Largely unaffected - RAAS crosstalk only"
+      },
+      {
+        "node": "Adrenal medulla - epinephrine / norepinephrine",
+        "coffee": "pronounced surge (central adenosine blockade + PDE inhibition)",
+        "chocolate": "neutral to mild stabilisation; preserves heart-rate variability",
+        "net": "Affected - strong sympathoadrenal drive from coffee"
+      },
+      {
+        "node": "Dopaminergic pathways",
+        "coffee": "A2A-D2 heteromer disinhibition: D2/D3 efficiency up, no DAT binding; mesocortical focus + nigrostriatal readiness",
+        "chocolate": "phasic VTA firing to the accumbens shell (reward), beta-endorphin + anandamide reinforcement; L-tyrosine substrate supply",
+        "net": "Affected - different mechanisms, same layer"
+      },
+      {
+        "node": "Thyroid axis (HPT)",
+        "coffee": "no direct TRH/TSH change in healthy euthyroid systems; cortisol suppresses DIO1/DIO2, raises DIO3/rT3; sequesters oral T4 in the gut (bioavailability -25-35% within 60 min)",
+        "chocolate": "no TPO inhibition; Mg/Cu/Se/Zn support synthesis enzymes; no baseline fT4/fT3/TSH shift",
+        "net": "Centrally unaffected; peripherally affected (conversion + absorption)"
+      }
+    ]
+  },
+  "sim_modes": [
+    {
+      "id": "homeostasis",
+      "name": "Homeostasis",
+      "badge": "BALANCED",
+      "balance": 92,
+      "summary": "Every loop closed. Drives are answered, feedback is heard, conversion keeps pace. This is the system doing the only job it has: staying in range."
+    },
+    {
+      "id": "stressed",
+      "name": "Stressed - the coffee push",
+      "badge": "DRIVEN",
+      "balance": 64,
+      "summary": "Adenosine blockade lifts the brake: CRH and ACTH drive harder, the dopaminergic layer sharpens, the medulla surges. The loops still close - but everything runs hot, and conversion starts to lag the drive."
+    },
+    {
+      "id": "decoupled",
+      "name": "Decoupled - a loop breaks",
+      "badge": "LOOP BROKEN",
+      "balance": 31,
+      "broken": [
+        [
+          "thyroid",
+          "liverkidney"
+        ],
+        [
+          "liverkidney",
+          "hypothalamus"
+        ]
+      ],
+      "summary": "The conversion loop is cut (red X). T4 leaves the thyroid and never comes back as T3; the controllers, reading silence as shortage, order more drive from the wrong organ while the adrenal compensates. Balance decays - not at the break, but everywhere. In a looped system, no failure is local."
+    }
+  ]
+}
