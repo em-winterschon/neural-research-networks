@@ -1,0 +1,48 @@
+@startuml fab-telemetry-dataflow
+!include uml-palette.puml
+title Fab Automation - Telemetry + QA Feedback Loop (ADR-FAB-003) - tag: telemetry
+
+component "K1 Max internal camera" as CAM1 <<source>>
+component "Zowiebox NDI-HX3\nRTSP bed-plate angle" as CAM2 <<source>>
+component "Hubitat C8 sensors\ntemp / humidity / mmWave / motion" as SENS <<source>>
+component "Z-Wave outlet monitor\nwatts, switching" as WATTS <<source>>
+
+component "Obico (self-hosted)\nLayer 1: failure detection" as L1 <<special>>
+component "Frame metrics\nLayer 2: bed-clear, first layer" as L2 <<core>>
+component "Environment + power join\nLayer 3: C8 + Prometheus" as L3 <<ingest>>
+
+database "Prometheus\nexisting house metrics store" as PROM <<store>>
+database "Job record (git + sacct)\nframes, verdicts, kWh/part" as REC <<store>>
+
+component "Defect taxonomy\none row per verdict" as TAX <<core>>
+component "Profile diff\nqa/<job-id> branch" as DIFF <<derived>>
+component "Jenkins build result\n= QA verdict" as JENK <<report>>
+component "Hard kill (fire-class only)\noutlet power cut" as KILL <<alert>>
+
+CAM1 --> L1
+CAM2 --> L2
+SENS --> L3
+WATTS --> L3
+L3 --> PROM : query series
+L1 --> TAX
+L2 --> TAX
+L3 --> TAX : env correlation\n(profile fault vs cold room)
+TAX --> REC
+TAX --> DIFF : profile-class defects
+DIFF ..> TAX : merged profile\nfeeds next print
+TAX --> JENK : pass / fail
+L1 --> KILL : failure + temp anomaly
+KILL --> WATTS : cut
+
+legend right
+  |= Role |= Meaning |
+  | <<source>> | cameras + sensors |
+  | <<special>> | AI detection |
+  | <<core>> | QA analysis |
+  | <<ingest>> | telemetry join |
+  | <<store>> | metrics + job records |
+  | <<derived>> | profile diffs |
+  | <<report>> | Jenkins result surface |
+  | <<alert>> | fire-class hard kill |
+endlegend
+@enduml

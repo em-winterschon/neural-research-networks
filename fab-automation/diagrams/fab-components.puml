@@ -1,0 +1,50 @@
+@startuml fab-components
+!include uml-palette.puml
+title Fab Automation - Component View (ADR-FAB-001 / 002) - tags: build-componentry, telemetry
+
+actor "Eva" as EVA <<source>>
+actor "Robin (printer owner, Gate G0)" as ROBIN <<source>>
+
+package "fab-queue (git)" {
+  artifact "STL / 3MF models" as STL <<source>>
+  artifact "Profiles: 0.2ruby / 0.4hs\n+ per-spool filament" as PROFILES <<canonical>>
+  artifact "Job manifests" as MANIFEST <<canonical>>
+}
+
+component "Jenkins\nfront door + reporting" as JENKINS <<report>>
+component "SLURM\nslice -> print -> QA chain" as SLURM <<core>>
+component "OrcaSlicer CLI (Xvfb)\nheadless slicing" as ORCA <<core>>
+component "Moonraker API :7125\nsole writer to printer" as MOON <<ingest>>
+component "Creality K1 Max\nceramic hotend, ruby/HS nozzles" as K1 <<service>>
+component "QA jobs\nverdict = build result" as QA <<core>>
+component "Obico (self-hosted)\nAI failure detection" as OBICO <<special>>
+component "Carrier-swap drawer" as DRAWER <<side>>
+
+EVA --> JENKINS : submit job
+ROBIN ..> K1 : Gate G0 sign-off
+STL --> ORCA
+PROFILES --> ORCA
+JENKINS --> SLURM : fab-submit (manifest)
+MANIFEST --> SLURM
+SLURM --> ORCA : slice job (CPU nodes)
+ORCA --> MOON : gcode upload
+SLURM --> MOON : print job (singleton, exclusive)
+MOON --> K1 : start / poll / pause
+K1 --> OBICO : internal camera
+OBICO --> QA : failure verdicts
+SLURM --> QA : afterany
+QA --> PROFILES : profile diff (qa/<job-id> branch)
+DRAWER ..> K1 : IDEA ONLY (RUNBOOK 9b)\nplate swap, no human
+
+legend right
+  |= Role |= Meaning |
+  | <<source>> | people, model inputs |
+  | <<canonical>> | versioned profiles + manifests |
+  | <<report>> | Jenkins front door |
+  | <<core>> | scheduling, slicing, QA compute |
+  | <<ingest>> | Moonraker control path |
+  | <<service>> | the printer |
+  | <<special>> | AI failure detection |
+  | <<side>> | idea-only extension |
+endlegend
+@enduml

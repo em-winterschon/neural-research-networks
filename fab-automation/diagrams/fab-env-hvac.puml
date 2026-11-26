@@ -1,0 +1,45 @@
+@startuml fab-env-hvac
+!include uml-palette.puml
+title Fab Automation - Environment / HVAC / Power (ADR-FAB-004) - tag: env-hvac
+
+component "Second-bathroom HVAC\nprinter room conditioning" as HVAC1 <<service>>
+component "2x Tripp Lite rack HVAC\nSNMP, remote on/off, temp ctl" as HVAC2 <<service>>
+component "Printer space\nK1 Max, door + lid OPEN\n(room is the chamber)" as ROOM <<special>>
+component "Home server rack\nM70 / Orin / Forge plant" as RACK <<service>>
+component "12V fan inventory\n40-140 mm, printed ducting" as FANS <<side>>
+
+component "Hubitat C8\nZ-Wave, sensors, outlets" as C8 <<ingest>>
+component "Prometheus scraper\nSNMP + house metrics" as PROM <<store>>
+component "Z-Wave outlet monitor\nprinter power lifecycle" as OUTLET <<ingest>>
+component "SLURM print job\non -> print -> cool -> off" as JOB <<core>>
+component "Fire-class interlock\nsmoke / wattage / anomaly" as FIRE <<alert>>
+
+HVAC1 --> ROOM : conditioned air
+HVAC2 --> RACK : rack cooling
+FANS ..> ROOM : ducting as needed
+FANS ..> RACK
+C8 --> PROM : environmental series
+HVAC2 --> PROM : SNMP metrics
+ROOM --> C8 : temp / humidity / presence
+JOB --> OUTLET : power lifecycle
+OUTLET --> ROOM : printer power + watts
+FIRE --> OUTLET : hard cut (fire-class only)
+C8 --> FIRE : smoke alarm state
+
+note bottom of ROOM
+  Protocols in scope: Z-Wave via C8, Ethernet,
+  RTSP/NDI, Moonraker, SNMP/Prometheus.
+  Matter / Thread: explicitly out (Eva, 2026-11-26).
+end note
+
+legend right
+  |= Role |= Meaning |
+  | <<service>> | HVAC + spaces + rack |
+  | <<special>> | printer space (open chamber) |
+  | <<ingest>> | C8 + outlet control path |
+  | <<store>> | Prometheus |
+  | <<core>> | print job lifecycle |
+  | <<alert>> | fire-class interlock |
+  | <<side>> | fan inventory |
+endlegend
+@enduml

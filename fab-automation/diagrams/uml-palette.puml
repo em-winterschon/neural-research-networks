@@ -1,0 +1,216 @@
+' =====================================================================
+' uml-palette.puml - unified UML color palette (instituted 2026-11-24)
+'
+' Canonical source: the neuro-endocrine model v3.1 render
+' (goals/neurocognitive-endocrine-3d-visualisation). Every hex below
+' was sampled from that render's legend dots, 2026-11-24.
+'
+' RULE: colors are SEMANTIC. A role keeps its color in every diagram
+' in every repo, so a reader can identify an element's role by color
+' alone. Do not recolor ad hoc; if a new role is needed, extend
+' UML-PALETTE.md and this file together.
+'
+' USAGE: after @startuml, add
+'   !include <path-to>/diagrams-common/uml-palette.puml
+' then tag each element with its role stereotype, e.g.
+'   [quant_core] as CORE <<core>>
+'   database "labs.db" as LABSDB <<store>>
+' Full role table: UML-PALETTE.md (same directory).
+' =====================================================================
+
+skinparam backgroundColor #0B0E13
+skinparam defaultFontColor #E6EDF3
+skinparam shadowing false
+
+skinparam title {
+  FontColor #E6EDF3
+}
+
+skinparam arrow {
+  Color #93A5B8
+  FontColor #C7D0DB
+}
+
+skinparam note {
+  BackgroundColor #141A22
+  BorderColor #9FB6C9
+  FontColor #C7D0DB
+}
+
+skinparam legend {
+  BackgroundColor #10151C
+  BorderColor #3A4656
+  FontColor #E6EDF3
+}
+
+skinparam package {
+  BackgroundColor #10151C
+  BorderColor #3A4656
+  FontColor #E6EDF3
+}
+
+' --- role stereotypes, repeated per element type -------------------
+' source    #E87FB0 pink       external sources, actors, inputs
+' ingest    #F59E42 orange     ingest adapters, shippers, collectors
+' canonical #B07FE8 lavender   canonical state (CAS, event ledger)
+' store     #3DDC84 green      series stores, databases, projections
+' core      #37C8E8 cyan       analytics / compute core
+' derived   #7FE8A8 mint       read adapters, derived-data exporters
+' report    #F2E14C yellow     reporting and visualization surfaces
+' service   #9FB6C9 slate      access layer, infrastructure services
+' alert     #FF5A3C red-orange alerts, rejects, failure surfaces
+' special   #C44FD6 magenta    inference / AI services, experimental
+' side      #FF8C69 salmon     side outputs, secondary paths
+
+skinparam component {
+  BackgroundColor #1A222C
+  BorderColor #5A6B7D
+  FontColor #E6EDF3
+  BackgroundColor<<source>> #E87FB0
+  BorderColor<<source>> #E6EDF3
+  FontColor<<source>> #0B0E13
+  BackgroundColor<<ingest>> #F59E42
+  BorderColor<<ingest>> #E6EDF3
+  FontColor<<ingest>> #0B0E13
+  BackgroundColor<<canonical>> #B07FE8
+  BorderColor<<canonical>> #E6EDF3
+  FontColor<<canonical>> #0B0E13
+  BackgroundColor<<store>> #3DDC84
+  BorderColor<<store>> #E6EDF3
+  FontColor<<store>> #0B0E13
+  BackgroundColor<<core>> #37C8E8
+  BorderColor<<core>> #E6EDF3
+  FontColor<<core>> #0B0E13
+  BackgroundColor<<derived>> #7FE8A8
+  BorderColor<<derived>> #E6EDF3
+  FontColor<<derived>> #0B0E13
+  BackgroundColor<<report>> #F2E14C
+  BorderColor<<report>> #E6EDF3
+  FontColor<<report>> #0B0E13
+  BackgroundColor<<service>> #9FB6C9
+  BorderColor<<service>> #E6EDF3
+  FontColor<<service>> #0B0E13
+  BackgroundColor<<alert>> #FF5A3C
+  BorderColor<<alert>> #E6EDF3
+  FontColor<<alert>> #0B0E13
+  BackgroundColor<<special>> #C44FD6
+  BorderColor<<special>> #E6EDF3
+  FontColor<<special>> #0B0E13
+  BackgroundColor<<side>> #FF8C69
+  BorderColor<<side>> #E6EDF3
+  FontColor<<side>> #0B0E13
+}
+
+skinparam database {
+  BackgroundColor #1A222C
+  BorderColor #5A6B7D
+  FontColor #E6EDF3
+  BackgroundColor<<source>> #E87FB0
+  BorderColor<<source>> #E6EDF3
+  FontColor<<source>> #0B0E13
+  BackgroundColor<<ingest>> #F59E42
+  BorderColor<<ingest>> #E6EDF3
+  FontColor<<ingest>> #0B0E13
+  BackgroundColor<<canonical>> #B07FE8
+  BorderColor<<canonical>> #E6EDF3
+  FontColor<<canonical>> #0B0E13
+  BackgroundColor<<store>> #3DDC84
+  BorderColor<<store>> #E6EDF3
+  FontColor<<store>> #0B0E13
+  BackgroundColor<<core>> #37C8E8
+  BorderColor<<core>> #E6EDF3
+  FontColor<<core>> #0B0E13
+  BackgroundColor<<derived>> #7FE8A8
+  BorderColor<<derived>> #E6EDF3
+  FontColor<<derived>> #0B0E13
+  BackgroundColor<<report>> #F2E14C
+  BorderColor<<report>> #E6EDF3
+  FontColor<<report>> #0B0E13
+  BackgroundColor<<service>> #9FB6C9
+  BorderColor<<service>> #E6EDF3
+  FontColor<<service>> #0B0E13
+  BackgroundColor<<alert>> #FF5A3C
+  BorderColor<<alert>> #E6EDF3
+  FontColor<<alert>> #0B0E13
+  BackgroundColor<<special>> #C44FD6
+  BorderColor<<special>> #E6EDF3
+  FontColor<<special>> #0B0E13
+  BackgroundColor<<side>> #FF8C69
+  BorderColor<<side>> #E6EDF3
+  FontColor<<side>> #0B0E13
+}
+
+skinparam node {
+  BackgroundColor #10151C
+  BorderColor #3A4656
+  FontColor #E6EDF3
+}
+
+skinparam artifact {
+  BackgroundColor #1A222C
+  BorderColor #5A6B7D
+  FontColor #E6EDF3
+  BackgroundColor<<source>> #E87FB0
+  BorderColor<<source>> #E6EDF3
+  FontColor<<source>> #0B0E13
+  BackgroundColor<<ingest>> #F59E42
+  BorderColor<<ingest>> #E6EDF3
+  FontColor<<ingest>> #0B0E13
+  BackgroundColor<<canonical>> #B07FE8
+  BorderColor<<canonical>> #E6EDF3
+  FontColor<<canonical>> #0B0E13
+  BackgroundColor<<store>> #3DDC84
+  BorderColor<<store>> #E6EDF3
+  FontColor<<store>> #0B0E13
+  BackgroundColor<<core>> #37C8E8
+  BorderColor<<core>> #E6EDF3
+  FontColor<<core>> #0B0E13
+  BackgroundColor<<derived>> #7FE8A8
+  BorderColor<<derived>> #E6EDF3
+  FontColor<<derived>> #0B0E13
+  BackgroundColor<<report>> #F2E14C
+  BorderColor<<report>> #E6EDF3
+  FontColor<<report>> #0B0E13
+  BackgroundColor<<service>> #9FB6C9
+  BorderColor<<service>> #E6EDF3
+  FontColor<<service>> #0B0E13
+  BackgroundColor<<alert>> #FF5A3C
+  BorderColor<<alert>> #E6EDF3
+  FontColor<<alert>> #0B0E13
+  BackgroundColor<<special>> #C44FD6
+  BorderColor<<special>> #E6EDF3
+  FontColor<<special>> #0B0E13
+  BackgroundColor<<side>> #FF8C69
+  BorderColor<<side>> #E6EDF3
+  FontColor<<side>> #0B0E13
+}
+
+skinparam actor {
+  BackgroundColor #E87FB0
+  BorderColor #E6EDF3
+  FontColor #E6EDF3
+}
+
+skinparam queue {
+  BackgroundColor #1A222C
+  BorderColor #5A6B7D
+  FontColor #E6EDF3
+  BackgroundColor<<canonical>> #B07FE8
+  BorderColor<<canonical>> #E6EDF3
+  FontColor<<canonical>> #0B0E13
+  BackgroundColor<<store>> #3DDC84
+  BorderColor<<store>> #E6EDF3
+  FontColor<<store>> #0B0E13
+}
+
+skinparam file {
+  BackgroundColor #1A222C
+  BorderColor #5A6B7D
+  FontColor #E6EDF3
+  BackgroundColor<<store>> #3DDC84
+  BorderColor<<store>> #E6EDF3
+  FontColor<<store>> #0B0E13
+  BackgroundColor<<source>> #E87FB0
+  BorderColor<<source>> #E6EDF3
+  FontColor<<source>> #0B0E13
+}
