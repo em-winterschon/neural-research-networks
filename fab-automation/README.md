@@ -16,7 +16,10 @@ root/Moonraker install on his printer) precedes any implementation.
   - ADR-FAB-003 telemetry + QA feedback loop — tags: telemetry
   - ADR-FAB-004 environment + HVAC plant — tags: env-hvac
 - `diagrams/` — PlantUML sources + SVG renders, unified semantic palette
-  (`uml-palette.puml`, endocrine-derived; dark background always):
+  (`uml-palette.puml`, endocrine-derived; dark background always).
+  Re-render with `diagrams/render-diagrams.sh` (PNG + SVG; pattern from
+  LtCol Forge's render script in the GitLab RAG repo — PlantUML with
+  Graphviz layout):
   - `fab-components` — pipeline component view
   - `fab-telemetry-dataflow` — telemetry + QA loop view
   - `fab-env-hvac` — environment / HVAC / power view
