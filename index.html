@@ -127,6 +127,7 @@
 <button id="fx-toggle" type="button">Coffee x Chocolate - node by node</button>
 <div id="fx"></div>
 
+<script src="ember.js"></script>
 <script type="module">
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.js';
@@ -339,6 +340,23 @@ async function main() {
     im.effects.map(r => `<tr><td class="node">${r.node}</td><td>${r.coffee}</td><td>${r.chocolate}</td><td class="net">${r.net}</td></tr>`).join('') +
     `</tbody></table>`;
   $('fx-toggle').addEventListener('click', () => $('fx').classList.toggle('open'));
+
+  // Ember panel: expose a live state snapshot (public model data only)
+  if (window.EmberPanel) EmberPanel.registerStateProvider(() => {
+    const f = focused ? nodeById[focused] : null;
+    return {
+      mode: { id: mode.id, name: mode.name, balance: mode.balance, summary: mode.summary },
+      focused: f ? { name: f.name, kind: f.kind, detail: f.detail || '',
+        connections: data.edges.filter(e => e.from === f.id || e.to === f.id).map(e => ({
+          direction: e.from === f.id ? 'outgoing' : 'incoming',
+          other: (e.from === f.id ? nodeById[e.to] : nodeById[e.from]).name, signal: e.signal })),
+        fx: (data.intake_module.effects.find(r => r.node === f.name) || null) } : null,
+      brokenLinks: data.edges.filter(e => isBroken(e)).map(e => ({
+        from: nodeById[e.from].name, to: nodeById[e.to].name, signal: e.signal })),
+      visiblePathways: data.pathways.filter(p => pwVisible[p.id] !== false).map(p => p.name),
+      speed: speed
+    };
+  });
 
   setMode(mode.id);
 

@@ -32,6 +32,10 @@ to the axes.
   model-data.json.
 - preview.png / preview-decoupled.png / preview-effects.png -
   verified renders (2026-11-24).
+- ember.js + proxy.py + EMBER.md - the "Explain this state"
+  panel: sends the live simulation state to Muse Ember
+  (Meta Model API, muse-ember-1.0) and explains it back, with
+  a full prompt/token trace. See EMBER.md.
 
 ## Run
 
@@ -40,6 +44,12 @@ to the axes.
 
 (Three.js r160 is vendored under vendor/ - MIT licence,
 (c) Three.js Authors - so the page runs fully offline.)
+
+For the Ember panel, either paste a Model API key into the
+panel (direct mode), or serve through the proxy with the key
+in its environment:
+
+    MODEL_API_KEY=... python3 proxy.py 8000
 
 ## Status
 

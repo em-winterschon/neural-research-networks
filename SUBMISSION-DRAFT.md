@@ -32,3 +32,17 @@ Needs before submission (fill in when the challenge rules land):
 - [ ] Required build tooling / budget rules, if any
 - [ ] Hosting target and submission format
 - [ ] Team attribution line (Eva + Robin, as enrolled)
+
+Status against the verified Ember hackathon rules (checked
+2026-11-24/25; submission by Dec 2, 21:00 ET, via the Cerebral
+Valley portal):
+- [x] Public GitHub repository - em-winterschon/neural-research-networks
+- [x] AI functionality on Muse Ember via the Meta Model API -
+  "Explain this state" panel (ember.js; model muse-ember-1.0;
+  direct key mode or proxy.py). See EMBER.md.
+- [ ] Prompt/token trace - the panel and proxy generate it
+  (ember-trace.json / ember-trace.jsonl); first real trace is
+  produced by running one Explain call with a funded key.
+- [ ] 3-minute demo video
+- [ ] Eligibility confirmation (solo-only, US-located) against
+  the actual enrollment
